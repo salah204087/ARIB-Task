@@ -1,0 +1,45 @@
+﻿@model ARIB_Task_MVC.DTOs.TaskDto
+
+@{
+    ViewData["Title"] = "Add Task";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg border-0 col-md-8 offset-md-2">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">📝 Add New Task</h4>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label">Task Name <span class="text-danger">*</span></label>
+                    <input asp-for="Name" class="form-control" placeholder="Enter task name" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label">Description</label>
+                    <textarea asp-for="Description" class="form-control" placeholder="Write task details..." rows="4"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="AssignedToId" class="form-label">Assign To <span class="text-danger">*</span></label>
+                    <select asp-for="AssignedToId" class="form-select" asp-items="ViewBag.Employees">
+                        <option value="">-- Select Employee --</option>
+                    </select>
+                    <span asp-validation-for="AssignedToId" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <a asp-action="Index" class="btn btn-outline-secondary me-2">Cancel</a>
+                    <button type="submit" class="btn btn-success">✅ Save Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,14 @@
+D:\projects\ARIB-Task\ARIB Task\DataLayer\bin\Debug\net9.0\DataLayer.deps.json
+D:\projects\ARIB-Task\ARIB Task\DataLayer\bin\Debug\net9.0\DataLayer.runtimeconfig.json
+D:\projects\ARIB-Task\ARIB Task\DataLayer\bin\Debug\net9.0\DataLayer.dll
+D:\projects\ARIB-Task\ARIB Task\DataLayer\bin\Debug\net9.0\DataLayer.pdb
+D:\projects\ARIB-Task\ARIB Task\DataLayer\obj\Debug\net9.0\DataLayer.csproj.AssemblyReference.cache
+D:\projects\ARIB-Task\ARIB Task\DataLayer\obj\Debug\net9.0\DataLayer.GeneratedMSBuildEditorConfig.editorconfig
+D:\projects\ARIB-Task\ARIB Task\DataLayer\obj\Debug\net9.0\DataLayer.AssemblyInfoInputs.cache
+D:\projects\ARIB-Task\ARIB Task\DataLayer\obj\Debug\net9.0\DataLayer.AssemblyInfo.cs
+D:\projects\ARIB-Task\ARIB Task\DataLayer\obj\Debug\net9.0\DataLayer.csproj.CoreCompileInputs.cache
+D:\projects\ARIB-Task\ARIB Task\DataLayer\obj\Debug\net9.0\DataLayer.dll
+D:\projects\ARIB-Task\ARIB Task\DataLayer\obj\Debug\net9.0\refint\DataLayer.dll
+D:\projects\ARIB-Task\ARIB Task\DataLayer\obj\Debug\net9.0\DataLayer.pdb
+D:\projects\ARIB-Task\ARIB Task\DataLayer\obj\Debug\net9.0\DataLayer.genruntimeconfig.cache
+D:\projects\ARIB-Task\ARIB Task\DataLayer\obj\Debug\net9.0\ref\DataLayer.dll

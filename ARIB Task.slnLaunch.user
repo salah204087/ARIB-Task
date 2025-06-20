@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "ARIB Task\\ARIB Task.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "ARIB Task MVC\\ARIB Task MVC.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

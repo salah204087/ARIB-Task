@@ -1,0 +1,51 @@
+﻿@model ARIB_Task_MVC.DTOs.GetEmployeeDto
+@{
+    ViewData["Title"] = "Employee Details";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg border-0 rounded-4 p-4">
+        <h3 class="text-info fw-bold mb-4">
+            <i class="bi bi-person-badge me-2"></i> Employee Details
+        </h3>
+
+        <div class="row g-4">
+            <div class="col-md-8">
+                <dl class="row">
+                    <dt class="col-sm-4 text-muted">Full Name</dt>
+                    <dd class="col-sm-8">@Model.FullName</dd>
+
+                    <dt class="col-sm-4 text-muted">Gender</dt>
+                    <dd class="col-sm-8">@Model.Gender</dd>
+
+                    <dt class="col-sm-4 text-muted">Salary</dt>
+                    <dd class="col-sm-8">@Model.Salary.ToString("C")</dd>
+
+                    <dt class="col-sm-4 text-muted">Department</dt>
+                    <dd class="col-sm-8">@Model.Department?.Name</dd>
+                </dl>
+            </div>
+
+            <div class="col-md-4 text-center">
+                @if (Model.ProfileImage != null)
+                {
+                    <img src="data:@($"image/{Model.ProfileImageExtension?.Trim('.')}");base64,@Convert.ToBase64String(Model.ProfileImage)"
+                         alt="Profile Image"
+                         class="rounded-circle shadow-sm border border-3"
+                         width="150" height="150" />
+                    <div class="mt-2 text-muted small">Profile Image</div>
+                }
+                else
+                {
+                    <div class="text-muted fst-italic">No profile image</div>
+                }
+            </div>
+        </div>
+
+        <div class="mt-4 d-flex justify-content-end">
+            <a asp-action="Index" class="btn btn-outline-secondary px-4">
+                <i class="bi bi-arrow-left me-1"></i> Back to List
+            </a>
+        </div>
+    </div>
+</div>

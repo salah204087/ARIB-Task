@@ -1,0 +1,6 @@
+@ARIB_Task_HostAddress = http://localhost:5155
+
+GET {{ARIB_Task_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

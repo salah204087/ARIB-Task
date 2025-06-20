@@ -1,0 +1,103 @@
+﻿@model List<ARIB_Task_MVC.DTOs.GetMyTaskDto>
+
+@{
+    ViewData["Title"] = "My Tasks";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
+}
+
+<div class="container mt-5">
+    <h3 class="fw-bold mb-4">✅ My Tasks</h3>
+
+    <div class="card shadow-sm p-3">
+        <table id="myTasksTable" class="table table-bordered table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Description</th>
+                    <th>Assigned By</th>
+                    <th>Action</th>
+                    <th>Update</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var task in Model)
+                {
+                    <tr>
+                        <td>@task.Name</td>
+                        <td>
+                            @if (task.Status == "Pending")
+                            {
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            }
+                            else if (task.Status == "Completed")
+                            {
+                                <span class="badge bg-success">Completed</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">@task.Status</span>
+                            }
+                        </td>
+                        <td>@task.Description</td>
+                        <td>@task.AssignedBy</td>
+                        <td>
+                            <form asp-action="ChangeStatus" method="post" asp-controller="Task">
+                                <input type="hidden" name="id" value="@task.Id" />
+                                <button type="submit" class="btn btn-sm btn-warning">Change</button>
+                            </form>
+                        </td>
+                        <td>
+                            <div class="d-flex gap-1">
+                                <a asp-action="Edit" asp-route-id="@task.Id" class="btn btn-sm btn-info text-white">Edit</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@if (TempData["ToastMessage"] != null)
+{
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div class="toast align-items-center text-white bg-@(TempData["ToastType"]?.ToString() == "success" ? "success" : "danger") border-0 show">
+            <div class="d-flex">
+                <div class="toast-body">
+                    @TempData["ToastMessage"]
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#myTasksTable').DataTable({
+                paging: true,
+                pageLength: 5,
+                searching: true,
+                ordering: true,
+                language: {
+                    search: "🔍 Search:"
+                }
+            });
+
+            var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+            toastElList.map(function (toastEl) {
+                var toast = new bootstrap.Toast(toastEl)
+                toast.show()
+            });
+        });
+    </script>
+}

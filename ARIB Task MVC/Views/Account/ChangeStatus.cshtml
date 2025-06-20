@@ -1,0 +1,65 @@
+﻿@{
+    ViewData["Title"] = "Change Account Status";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    body {
+        background: linear-gradient(135deg, #e0eafc, #cfdef3);
+    }
+
+    .status-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        min-height: 400px;
+    }
+
+    .form-control {
+        border-radius: 10px;
+    }
+
+    .status-btn {
+        background-color: #dc3545;
+        color: white;
+        font-weight: 600;
+        border-radius: 10px;
+    }
+
+        .status-btn:hover {
+            background-color: #c82333;
+        }
+
+    h4 {
+        font-weight: bold;
+        color: #333;
+    }
+</style>
+
+<div class="container d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+    <div class="col-md-6">
+        <div class="status-card">
+            <h4 class="text-center mb-4">Change Account Status 🛠️</h4>
+
+            <form method="post" novalidate>
+                <div class="form-group mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input name="email" id="email" class="form-control" placeholder="Enter user email" required />
+                </div>
+
+                <div class="form-group mb-4">
+                    <label for="active" class="form-label">Status</label>
+                    <select name="active" id="active" class="form-control" required>
+                        <option value="true">Active</option>
+                        <option value="false">Inactive</option>
+                    </select>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn status-btn">Update Status</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

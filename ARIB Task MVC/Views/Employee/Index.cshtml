@@ -1,0 +1,190 @@
+﻿@model List<ARIB_Task_MVC.DTOs.GetEmployeeWithoutImageDto>
+
+@{
+    ViewData["Title"] = "Employees";
+}
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
+}
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary">Employees</h2>
+        <a class="btn btn-success shadow-sm rounded-pill px-4" asp-action="Create">
+            <i class="bi bi-plus-circle me-1"></i> Add New
+        </a>
+    </div>
+
+    <div class="card shadow border-0 rounded-4">
+        <div class="card-body p-0">
+            <table id="employeesTable" class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Name</th>
+                        <th>Gender</th>
+                        <th>Department</th>
+                        <th>Manager</th>
+                        <th style="width: 200px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        foreach (var emp in Model)
+                        {
+                            <tr>
+                                <td>@emp.Name</td>
+                                <td>@emp.Gender</td>
+                                <td>@emp.Department?.Name</td>
+                                <td>@emp.ManagerName</td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <a class="btn btn-sm btn-outline-info" asp-action="Details" asp-route-id="@emp.Id">
+                                            <i class="bi bi-info-circle"></i> Details
+                                        </a>
+                                        <a class="btn btn-sm btn-outline-warning" asp-action="Edit" asp-route-id="@emp.Id">
+                                            <i class="bi bi-pencil-square"></i> Edit
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-outline-danger delete-btn" data-id="@emp.Id" data-name="@emp.Name">
+                                            <i class="bi bi-trash"></i> Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted p-4">No employees found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteEmployeeModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="deleteEmployeeForm" method="post" asp-action="Delete">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="deleteEmployeeId" />
+                    Are you sure you want to delete <strong id="deleteEmployeeName"></strong>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#employeesTable').DataTable({
+                paging: true,
+                pageLength: 5,
+                searching: true,
+                ordering: true,
+                language: {
+                    search: "🔍 Search:"
+                }
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var deleteButtons = document.querySelectorAll(".delete-btn");
+            var deleteModalElement = document.getElementById('deleteEmployeeModal');
+            var deleteModal = new bootstrap.Modal(deleteModalElement);
+            var deleteEmployeeId = document.getElementById('deleteEmployeeId');
+            var deleteEmployeeName = document.getElementById('deleteEmployeeName');
+            var deleteEmployeeForm = document.getElementById('deleteEmployeeForm');
+
+            var employeeIdToDelete = null;
+
+            deleteButtons.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    employeeIdToDelete = this.getAttribute('data-id');
+                    var name = this.getAttribute('data-name');
+
+                    deleteEmployeeId.value = employeeIdToDelete;
+                    deleteEmployeeName.textContent = name;
+
+                    deleteModal.show();
+                });
+            });
+
+            deleteEmployeeForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                if (!employeeIdToDelete) return;
+
+                fetch(`/Employee/Delete/${employeeIdToDelete}`, {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    }
+                })
+                .then(async response => {
+                    if (response.ok) {
+                        showToast('Employee deleted successfully.', 'success');
+                        const row = document.querySelector(`button.delete-btn[data-id="${employeeIdToDelete}"]`).closest('tr');
+                        if(row) row.remove();
+                    } else {
+                        const errorText = await response.text();
+                        showToast(errorText || 'Failed to delete employee.', 'error');
+                    }
+                })
+                .catch(() => {
+                    showToast('Network error, please try again later.', 'error');
+                })
+                .finally(() => {
+                    deleteModal.hide();
+                    employeeIdToDelete = null;
+                });
+            });
+
+            function showToast(message, type = 'info') {
+                const toastContainer = document.createElement('div');
+                toastContainer.className = 'position-fixed bottom-0 end-0 p-3';
+                toastContainer.style.zIndex = '9999';
+
+                const bgClass = type === 'success' ? 'bg-success' : type === 'error' ? 'bg-danger' : 'bg-info';
+
+                toastContainer.innerHTML = `
+                    <div class="toast align-items-center text-white ${bgClass} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body">${message}</div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                    </div>`;
+
+                document.body.appendChild(toastContainer);
+
+                const toastEl = toastContainer.querySelector('.toast');
+                const bsToast = new bootstrap.Toast(toastEl);
+                bsToast.show();
+
+                toastEl.addEventListener('hidden.bs.toast', () => {
+                    toastContainer.remove();
+                });
+            }
+        });
+    </script>
+}

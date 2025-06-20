@@ -1,0 +1,276 @@
+﻿@model List<ARIB_Task_MVC.DTOs.GetDepartmentDto>
+
+@{
+    ViewData["Title"] = "Departments";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" />
+}
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-primary">🏢 Departments</h3>
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addDepartmentModal">
+            ➕ Add Department
+        </button>
+    </div>
+
+    @if (TempData["ToastMessage"] != null)
+    {
+        var toastType = TempData["ToastType"]?.ToString() ?? "info";
+        var toastBg = toastType == "success" ? "bg-success" : toastType == "error" ? "bg-danger" : "bg-info";
+        <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+            <div id="toast-message" class="toast align-items-center text-white @toastBg border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">@TempData["ToastMessage"]</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="card shadow-sm p-3">
+        <table class="table table-bordered table-hover" id="departmentTable">
+            <thead class="table-dark">
+                <tr>
+                    <th style="width: 80px;">#</th>
+                    <th>Name</th>
+                    <th style="width: 220px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    foreach (var dept in Model)
+                    {
+                        <tr id="row-@dept.Id">
+                            <td>@dept.Id</td>
+                            <td class="dept-name">@dept.Name</td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-warning btn-sm edit-btn" data-id="@dept.Id" data-name="@dept.Name">
+                                        ✏️ Edit
+                                    </button>
+                                    <button class="btn btn-danger btn-sm delete-btn" data-id="@dept.Id" data-name="@dept.Name">
+                                        🗑️ Delete
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="3" class="text-center text-muted p-4">No departments found.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- إحصائيات الموظفين -->
+        <div class="mt-3 text-end">
+            <strong>Total Employees:</strong> <span id="filteredEmployees">0</span> |
+            <strong>Total Salary:</strong> <span id="filteredSalaries">0.00</span> EGP
+        </div>
+    </div>
+</div>
+
+<!-- Add Modal -->
+<div class="modal fade" id="addDepartmentModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="addDepartmentForm">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Department</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input name="Name" id="addName" class="form-control" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editDepartmentModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="editDepartmentForm">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Department</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="Id" id="editId" />
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input name="Name" id="editName" class="form-control" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteDepartmentModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="deleteDepartmentForm">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="Id" id="deleteId" />
+                    Are you sure you want to delete <strong id="deleteDeptName"></strong>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            const departmentsData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+
+            function updateFilteredStats() {
+                let totalEmployees = 0;
+                let totalSalaries = 0;
+
+                $('#departmentTable tbody tr:visible').each(function () {
+                    const deptId = parseInt($(this).attr('id').replace('row-', ''));
+                    const department = departmentsData.find(d => d.Id === deptId);
+                    if (department?.Employees) {
+                        totalEmployees += department.Employees.length;
+                        totalSalaries += department.Employees.reduce((sum, emp) => sum + emp.Salary, 0);
+                    }
+                });
+
+                $('#filteredEmployees').text(totalEmployees);
+                $('#filteredSalaries').text(totalSalaries.toFixed(2));
+            }
+
+            const table = $('#departmentTable').DataTable({
+                paging: true,
+                pageLength: 5,
+                searching: true,
+                ordering: true,
+                language: {
+                    search: "🔍 Search:"
+                }
+            });
+
+            table.on('draw', function () {
+                updateFilteredStats();
+            });
+
+            updateFilteredStats();
+
+            var toastEl = document.getElementById('toast-message');
+            if (toastEl) new bootstrap.Toast(toastEl).show();
+
+            $(document).on('click', '.edit-btn', function () {
+                $('#editId').val($(this).data('id'));
+                $('#editName').val($(this).data('name'));
+                new bootstrap.Modal(document.getElementById('editDepartmentModal')).show();
+            });
+
+            $(document).on('click', '.delete-btn', function () {
+                $('#deleteId').val($(this).data('id'));
+                $('#deleteDeptName').text($(this).data('name'));
+                new bootstrap.Modal(document.getElementById('deleteDepartmentModal')).show();
+            });
+
+            $('#addDepartmentForm').on('submit', async function (e) {
+                e.preventDefault();
+                const name = $('#addName').val();
+                const res = await fetch('/Department/Create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ Name: name })
+                });
+                if (res.ok) {
+                    location.reload();
+                } else {
+                    const errorText = await res.text();
+                    showToast(errorText, "error");
+                }
+            });
+
+            $('#editDepartmentForm').on('submit', async function (e) {
+                e.preventDefault();
+                const id = $('#editId').val();
+                const name = $('#editName').val();
+                const res = await fetch(`/Department/Edit/${id}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ Name: name })
+                });
+                if (res.ok) {
+                    location.reload();
+                } else {
+                    const errorText = await res.text();
+                    showToast(errorText, "error");
+                }
+            });
+
+            $('#deleteDepartmentForm').on('submit', async function (e) {
+                e.preventDefault();
+                const id = $('#deleteId').val();
+                const res = await fetch(`/Department/Delete/${id}`, {
+                    method: 'POST'
+                });
+                if (res.ok) {
+                    location.reload();
+                } else {
+                    const errorText = await res.text();
+                    showToast(errorText, "error");
+                }
+            });
+
+            function showToast(message, type = "info") {
+                const toastContainer = document.createElement("div");
+                toastContainer.className = "position-fixed bottom-0 end-0 p-3";
+                toastContainer.style.zIndex = "9999";
+                const bg = type === "success" ? "bg-success" : type === "error" ? "bg-danger" : "bg-info";
+                toastContainer.innerHTML = `
+                    <div class="toast align-items-center text-white ${bg} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body">${message}</div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                    </div>`;
+                document.body.appendChild(toastContainer);
+                const toastEl = toastContainer.querySelector('.toast');
+                const bsToast = new bootstrap.Toast(toastEl);
+                bsToast.show();
+                toastEl.addEventListener('hidden.bs.toast', () => toastContainer.remove());
+            }
+        });
+    </script>
+}

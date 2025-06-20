@@ -1,0 +1,70 @@
+﻿@using ARIB_Task_MVC.DTOs
+@model LoginDto
+
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    body {
+        background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+    }
+
+    .login-card {
+        background: white;
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+    }
+
+    .login-btn {
+        background-color: #4a90e2;
+        color: white;
+        border-radius: 10px;
+        font-weight: 600;
+    }
+
+        .login-btn:hover {
+            background-color: #357ABD;
+        }
+
+    .form-control {
+        border-radius: 10px;
+    }
+
+    h3 {
+        font-weight: bold;
+        color: #333;
+    }
+</style>
+
+<div class="container d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+    <div class="col-md-5">
+        <div class="login-card">
+            <h3 class="text-center mb-4">Welcome Back 👋</h3>
+            <form asp-action="Login" method="post" novalidate>
+                <div class="form-group mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" placeholder="Enter your email" />
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label asp-for="Password" class="form-label"></label>
+                    <input asp-for="Password" type="password" class="form-control" placeholder="Enter your password" />
+                    <span asp-validation-for="Password" class="text-danger small"></span>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn login-btn">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

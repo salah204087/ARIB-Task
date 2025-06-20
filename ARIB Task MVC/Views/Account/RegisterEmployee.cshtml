@@ -1,0 +1,84 @@
+﻿@using ARIB_Task_MVC.DTOs
+@model RegisterationEmployeeDto
+
+@{
+    ViewData["Title"] = "Register Employee";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    body {
+        background: linear-gradient(135deg, #e0eafc, #cfdef3);
+    }
+
+    .register-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+    }
+
+    .form-control {
+        border-radius: 10px;
+    }
+
+    .register-btn {
+        background-color: #28a745;
+        color: white;
+        font-weight: 600;
+        border-radius: 10px;
+    }
+
+        .register-btn:hover {
+            background-color: #218838;
+        }
+
+    h3 {
+        font-weight: bold;
+        color: #333;
+    }
+</style>
+
+<div class="container d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+    <div class="col-md-6">
+        <div class="register-card">
+            <h3 class="text-center mb-4">Register New Employee</h3>
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger small" })
+
+            <form asp-action="RegisterEmployee" method="post" novalidate>
+                <div class="form-group mb-3">
+                    <label asp-for="Email" class="form-label"></label>
+                    <input asp-for="Email" class="form-control" placeholder="Enter email" />
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control" placeholder="Enter full name" />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Password" class="form-label"></label>
+                    <input asp-for="Password" type="password" class="form-control" placeholder="Choose a password" />
+                    <span asp-validation-for="Password" class="text-danger small"></span>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label asp-for="EmployeeId" class="form-label"></label>
+                    <input asp-for="EmployeeId" class="form-control" placeholder="Employee ID" />
+                    <span asp-validation-for="EmployeeId" class="text-danger small"></span>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn register-btn">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}
